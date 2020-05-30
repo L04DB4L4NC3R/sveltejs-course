@@ -5,6 +5,7 @@ const {
 } = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const verifyMW = require("../middlewares/auth");
 
 router.post("/signup", (req, res, next) => {
 	let {
@@ -65,6 +66,10 @@ router.post("/login", (req, res, next) => {
 			res.json({message: "Wrong password"})
 		}
 	}).catch(next)
+})
+
+router.get("/testauth", verifyMW, (req, res, next) => {
+	return res.json(req.decodedData);
 })
 
 module.exports = router;

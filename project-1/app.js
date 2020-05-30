@@ -13,6 +13,7 @@ app.get("/ping", (req, res, next) => {
 })
 
 app.use("/api/v1", require("./routes/auth"));
+app.use("/api/v1/todo", require("./routes/todo"));
 
 app.use((err, req, res, next) => {
 	res.status(500)
