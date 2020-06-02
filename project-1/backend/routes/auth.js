@@ -31,7 +31,7 @@ router.post("/signup", (req, res, next) => {
 					return
 				}
 				res.status(201)
-				res.json({id: user._id, token: token})
+				res.json({uid: user._id, token: token, displayName: user.username})
 			})
 		}).catch(next)
 	})
@@ -59,7 +59,7 @@ router.post("/login", (req, res, next) => {
 				if(err) {
 					return next(err)
 				}
-				res.json({id: user._id, token: token})
+				res.json({uid: user._id, token: token, displayName: user.username})
 			})
 		} else {
 			res.status(401)

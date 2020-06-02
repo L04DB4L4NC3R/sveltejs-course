@@ -49,9 +49,7 @@ function editTask(event)
 
 </script>
 
-
 <Row>
-
 <Col xs='auto'>
 <input bind:value={text} placeholder="Enter the New Task...">
 </Col>

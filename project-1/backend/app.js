@@ -1,12 +1,14 @@
 const express = require("express");
 const bp = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 require("dotenv").config();
 
 const app = express();
 
 app.use(bp.json());
+app.use(cors());
 
 app.get("/ping", (req, res, next) => {
 	res.json({message: "pong"})
