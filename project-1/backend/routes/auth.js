@@ -31,7 +31,7 @@ router.post("/signup", (req, res, next) => {
 					return
 				}
 				res.status(201)
-				res.json({uid: user._id, token: token, displayName: user.username})
+				res.json({uid: user._id, token: token, displayName: user.username, photoURL: "https://picsum.photos/200"})
 			})
 		}).catch(next)
 	})
@@ -59,7 +59,7 @@ router.post("/login", (req, res, next) => {
 				if(err) {
 					return next(err)
 				}
-				res.json({uid: user._id, token: token, displayName: user.username})
+				res.json({uid: user._id, token: token, displayName: user.username, photoURL: "https://picsum.photos/200"})
 			})
 		} else {
 			res.status(401)

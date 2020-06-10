@@ -1,11 +1,13 @@
 <script>
 import ToDoItem from './todoItem.svelte';
-import {db} from './firebase';
-import {collectionData} from 'rxfire/firestore';
+// import {db} from './firebase';
+// import {collectionData} from 'rxfire/firestore';
 
 import {startWith} from 'rxjs/operators';
 
 import  {Col,Row,Container,Button} from 'sveltestrap'
+
+import todoStore from './store.js'
 
 export let uid;
 
@@ -13,30 +15,95 @@ let text=''
 let idEditing = false;
 
 
-const query = db.collection('task').where('uid','==',uid).orderBy('created')
+let todos
 
-const todos= collectionData(query,'id').pipe(startWith([]))
+todoStore.subscribe(td => {
+	todos = td
+})
+
+fetch("http://localhost:3000/api/v1/todo/", {
+	headers: {
+		"Authorization": localStorage.getItem("token")
+	}
+}).then(res => res.json()
+).then(result => {
+	let newTodos = []
+	for (let todo of result.todos) {
+		newTodos.push({id: todo._id, text: todo.text,
+			done: todo.done})
+	}
+	todoStore.set(newTodos)
+}).catch(console.error)
 
 function add()
 {
-    db.collection('task').add({
-        uid,text,done:false,created:Date.now()
-    })
-
-    text=''
+	fetch("http://localhost:3000/api/v1/todo/", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": localStorage.getItem("token")
+		},
+		body: JSON.stringify({text})
+	}).then(res => res.json()
+	).then(result => {
+		console.log(result)
+		let newTodos = []
+		for (let todo of result.todos) {
+			newTodos.push({id: todo._id, text: todo.text,
+				done: todo.done})
+		}
+		todoStore.set(newTodos)
+	}).catch(console.error)
 }
 
 function removeTask(event)
 {   
 const {id} = event.detail;
 
-    db.collection('task').doc(id).delete();
+
+	fetch(`http://localhost:3000/api/v1/todo/?id=${id}`, {
+		method: "DELETE",
+		headers: {
+			"Authorization": localStorage.getItem("token")
+		}
+	}).then(res => res.json()
+	).then(result => {
+		let newTodos = []
+		for (let todo of result.todos) {
+			if (todo._id == id) {
+				continue
+			}
+			newTodos.push({id: todo._id, text: todo.text,
+				done: todo.done})
+		}
+		todoStore.set(newTodos)
+	}).catch(console.error)
 }
+
+
 function updateStatus(event)
 {
     const {id,newStatus} = event.detail;
 
-    db.collection('task').doc(id).update({done:newStatus})
+	fetch(`http://localhost:3000/api/v1/todo/?id=${id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": localStorage.getItem("token")
+		},
+		body: JSON.stringify({is_done: newStatus})
+	}).then(res => res.json()
+	).then(result => {
+		let newTodos = []
+		for (let todo of result.todos) {
+			if (todo._id == id) {
+				todo.done = newStatus
+			}
+			newTodos.push({id: todo._id, text: todo.text,
+				done: todo.done})
+		}
+		todoStore.set(newTodos)
+	}).catch(console.error)
     
 }
 
@@ -44,7 +111,25 @@ function editTask(event)
 {
     const {id,text} = event.detail;
 
-    db.collection('task').doc(id).update({text:text})
+	fetch(`http://localhost:3000/api/v1/todo/updatetext/?id=${id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": localStorage.getItem("token")
+		},
+		body: JSON.stringify({text})
+	}).then(res => res.json()
+	).then(result => {
+		let newTodos = []
+		for (let todo of result.todos) {
+			if (todo._id == id) {
+				todo.text = text
+			}
+			newTodos.push({id: todo._id, text: todo.text,
+				done: todo.done})
+		}
+		todoStore.set(newTodos)
+	}).catch(console.error)
 }
 
 </script>
@@ -62,7 +147,7 @@ function editTask(event)
 <div class="inner-container">
 
     <ul>
-        {#each $todos as todo}
+        {#each todos as todo}
             <ToDoItem {...todo} on:remove={removeTask} on:toggle={updateStatus} on:edit={editTask}/>
         {/each}
     </ul>

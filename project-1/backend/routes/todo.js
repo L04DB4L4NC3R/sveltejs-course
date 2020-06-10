@@ -5,7 +5,8 @@ const {
 	createTODO,
 	readTODOs,
 	updateTODO,
-	delTODO
+	delTODO,
+	updateTODOText
 } = require("../models/user")
 
 router.post("/", verifyMW, (req, res, next) => {
@@ -51,4 +52,18 @@ router.delete("/", verifyMW, (req, res, next) => {
 	}).catch(next)
 })
 
+
+
+router.put("/updatetext", verifyMW, (req, res, next) => {
+	let {
+		text
+	} = req.body;
+
+	const todo_id = req.query.id;
+
+	updateTODOText(req.decodedData.id, todo_id, text)
+	.then(data => {
+		res.json(data)
+	}).catch(next)
+})
 module.exports = router;

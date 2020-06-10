@@ -13,8 +13,6 @@ import {
 
   let user;
   
-  // let unsubscribed = authState(auth).subscribe(u => user = u)
-
 
 function signup()
 {
@@ -39,8 +37,8 @@ function signup()
 		localStorage.setItem("token", data.token);
 		localStorage.setItem("uid", data.uid);
 		localStorage.setItem("displayName", data.displayName);
+		localStorage.setItem("photoURL", data.photoURL);
 		location.reload();
-		alert(JSON.stringify(data))
 	}).catch(err => {
 		console.error(err);
 		alert("Error signing up")
@@ -78,8 +76,8 @@ function login() {
 		localStorage.setItem("token", data.token);
 		localStorage.setItem("uid", data.uid);
 		localStorage.setItem("displayName", data.displayName);
+		localStorage.setItem("photoURL", data.photoURL);
 		location.reload();
-		alert(JSON.stringify(data))
 	}).catch(err => {
 		console.error(err);
 		alert("Error logging in")
@@ -93,10 +91,6 @@ function login() {
 </script>
 
 
-
-
-
-
 <Card class="mb-3">
 {#if localStorage.getItem("uid")}
 <CardHeader>
@@ -105,8 +99,9 @@ function login() {
 </CardHeader>
 
 <CardBody>
-<Profile displayName={localStorage.getItem("displayName")} photoURL="" uid={localStorage.getItem("uid")} />
+<Profile displayName={localStorage.getItem("displayName")} photoURL={localStorage.getItem("photoURL")} uid={localStorage.getItem("uid")} />
     <hr>
+	<ToDos uid={localStorage.getItem("uid")} />
 </CardBody>
 
 

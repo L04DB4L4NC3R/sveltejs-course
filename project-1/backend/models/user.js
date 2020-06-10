@@ -49,14 +49,20 @@ module.exports.findByEmail = (email) => {
 
 
 module.exports.createTODO = (id, text) => {
-	return userModel.findOneAndUpdate({_id: id}, 
+	return new Promise((resolve, reject) => {
+
+	 userModel.findOneAndUpdate({_id: id}, 
 		{
 			"$push": {
 				todos: {
 					text
 				}
 			}
-		})
+		}).then(() => {
+			userModel.findOne({_id: id}, {password: 0}).then(resolve)
+			.catch(reject)
+		}).catch(reject)
+	})
 }
 
 module.exports.readTODOs = (id) => {
@@ -67,13 +73,14 @@ module.exports.readTODOs = (id) => {
 }
 
 module.exports.delTODO = (user_id, todo_id) => {
-	return userModel.findOneAndUpdate({_id: user_id}, {
-		"$pull": {
-			todos: {
-				_id: todo_id
+	return userModel.findOneAndUpdate({_id: user_id}, 
+		{
+			"$pull": {
+				todos: {
+					_id: todo_id
+				}
 			}
-		}
-	})
+		})
 }
 
 module.exports.updateTODO = (user_id, todo_id, is_done) => {
@@ -90,4 +97,20 @@ module.exports.updateTODO = (user_id, todo_id, is_done) => {
 		}
 	})
 }
+
+module.exports.updateTODOText = (user_id, todo_id, text) => {
+	return userModel.findOneAndUpdate({
+		_id: user_id,
+		"todos": {
+			"$elemMatch": {
+				_id: todo_id
+			}
+		}
+	}, {
+		"$set": {
+			"todos.$.text": text
+		}
+	})
+}
+
 
