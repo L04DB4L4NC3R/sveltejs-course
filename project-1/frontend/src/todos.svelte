@@ -21,7 +21,7 @@ todoStore.subscribe(td => {
 	todos = td
 })
 
-fetch("http://localhost:3000/api/v1/todo/", {
+fetch("https://sveltecourse-todoapp.herokuapp.com/api/v1/todo/", {
 	headers: {
 		"Authorization": localStorage.getItem("token")
 	}
@@ -37,7 +37,7 @@ fetch("http://localhost:3000/api/v1/todo/", {
 
 function add()
 {
-	fetch("http://localhost:3000/api/v1/todo/", {
+	fetch("https://sveltecourse-todoapp.herokuapp.com/api/v1/todo/", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -61,7 +61,7 @@ function removeTask(event)
 const {id} = event.detail;
 
 
-	fetch(`http://localhost:3000/api/v1/todo/?id=${id}`, {
+	fetch(`https://sveltecourse-todoapp.herokuapp.com/api/v1/todo/?id=${id}`, {
 		method: "DELETE",
 		headers: {
 			"Authorization": localStorage.getItem("token")
@@ -85,7 +85,7 @@ function updateStatus(event)
 {
     const {id,newStatus} = event.detail;
 
-	fetch(`http://localhost:3000/api/v1/todo/?id=${id}`, {
+	fetch(`https://sveltecourse-todoapp.herokuapp.com/api/v1/todo/?id=${id}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -111,7 +111,7 @@ function editTask(event)
 {
     const {id,text} = event.detail;
 
-	fetch(`http://localhost:3000/api/v1/todo/updatetext/?id=${id}`, {
+	fetch(`https://sveltecourse-todoapp.herokuapp.com/api/v1/todo/updatetext/?id=${id}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
